@@ -63,6 +63,12 @@ module CampfireBot
         end
       end
     end
+
+    protected
+    def log(*message)
+      puts "#{Time.now} | #{BOT_ENVIRONMENT} | #{message * ' | '}"
+      STDOUT.flush
+    end
     
     private
     
@@ -72,7 +78,7 @@ module CampfireBot
       else
         join_rooms_as_user
       end
-      puts "#{Time.now} | #{BOT_ENVIRONMENT} | Loader | Ready."
+      log 'Ready.'
     end
     
     def join_rooms_as_guest
@@ -95,22 +101,20 @@ module CampfireBot
     def load_plugins
       Dir["#{BOT_ROOT}/plugins/*.rb"].each do |x| 
         # skip disabled plugins
-        if @config['disable_plugins'].select{|name| x.include?(name)}.size == 0
+        unless @config['disable_plugins'].include?(File.basename(x,'.rb'))
           load x
         end
       end
       
       # And instantiate them
       Plugin.registered_plugins.each_pair do |name, klass|
-        puts "#{Time.now} | #{BOT_ENVIRONMENT} | Loader | loading plugin: #{name}"
-        STDOUT.flush
+        log "loading plugin: #{name}"
         Plugin.registered_plugins[name] = klass.new
       end
     end
   
     def handle_message(message)
-      # puts message.inspect
-      puts "#{Time.now} | #{message[:room].name} | #{message[:person]} | #{message[:message]}"
+      log(message[:room].name, message[:person], message[:message])
     
       %w(commands speakers messages).each {|type|
         Plugin.send("registered_#{type}").each {|handler|

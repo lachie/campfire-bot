@@ -71,5 +71,9 @@ module CampfireBot
                                 default)
       }
     end
+
+    def bot
+      CampfireBot::Bot.instance
+    end
   end
 end
