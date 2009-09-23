@@ -1,6 +1,10 @@
 require 'open-uri'
 require 'hpricot'
 
+# lame!
+OpenSSL::SSL.module_eval { remove_const :VERIFY_PEER }
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 class Hoptoad < CampfireBot::Plugin
   at_interval 2.minutes, :report_deployments
   on_command 'apps', :deployments
