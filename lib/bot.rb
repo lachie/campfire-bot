@@ -59,6 +59,8 @@ module CampfireBot
             else
               raise e.message
             end
+          rescue Object
+            puts "#{$!} [#{$!.class}]", $!.backtrace
           end
         end
       end
